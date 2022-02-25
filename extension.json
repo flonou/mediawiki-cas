@@ -1,0 +1,38 @@
+{
+	"name": "CASAuth",
+	"version": "1.0",
+	"author": [
+		"Florian Nouviale"
+	],
+	"descriptionmsg": "cas-desc",
+	"license-name": "MIT",
+	"type": "other",
+	"requires": {
+		"extensions": {
+			"PluggableAuth": ">= 5.1"
+		}
+	},
+	"MessagesDirs": {
+		"CASAuth": [
+			"i18n"
+		]
+	},
+	"config": {
+		"CASPhpPlugin": "/usr/share/php/CAS",
+		"CASServer": "cas.server.com",
+                "CASPort": "5555",
+		"CASUrl": "/cas",
+		"CASVersion": "1.0",
+		"CASMailExtension": "company.com",
+		"CASMailField": "mail",
+		"CASNameField": "name",
+		"PluggableAuth_Class": "CASAuth"
+	},
+	"AutoloadClasses": {
+		"CASAuth": "src/CASAuth.php"
+	},
+	"ConfigRegistry": {
+		"CASAuth": "GlobalVarConfig::newInstance"
+	},
+	"manifest_version": 1
+}
