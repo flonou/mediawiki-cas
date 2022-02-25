@@ -17,22 +17,14 @@ class CASAuth extends PluggableAuth {
 	public function authenticate( &$id, &$username, &$realname, &$email, &$errorMessage ) { 
 	$this->logger = LoggerFactory::getInstance( 'PluggableAuth' );
 
+	$this->openCAS();
+
         // Get config options
         $config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'CASAuth' ); // Get the config
-        $server = $config->get( 'CASServer' );
-        $port = $config->get( 'CASPort' );
-        $url = $config->get( 'CASUrl' );
-        $version = $config->get( 'CASVersion' );
-	$casFolder = $config->get( 'CASPhpPlugin' );
 	$mailField = $config->get( 'CASMailField' );
         $mailExtension = $config->get ('CASMailExtension' );
 	$nameField = $config->get( 'CASNameField' );
 
-	require_once($casFolder."/CAS.php");
-        phpCAS::client($version, $server, $port, $url, false);
-        phpCAS::setSingleSignoutCallback('casSingleSignOut');
-        phpCAS::setPostAuthenticateCallback('casPostAuth');
-        phpCAS::setNoCasServerValidation();
 
 
         try {
@@ -73,12 +65,27 @@ class CASAuth extends PluggableAuth {
     }
     
     public function deauthenticate( User &$user ) {
-	phpCAS::logout();
+	$this->openCAS();
+        phpCAS::logout();
         return true;
     }
     
     public function saveExtraAttributes( $id ) {
      
+    }
+
+    function openCAS() {
+        // Get config options
+        $config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'CASAuth' ); // Get the config
+        $server = $config->get( 'CASServer' );
+        $port = $config->get( 'CASPort' );
+        $url = $config->get( 'CASUrl' );
+        $version = $config->get( 'CASVersion' );
+	$casFolder = $config->get( 'CASPhpPlugin' );
+	require_once($casFolder."/CAS.php");
+        phpCAS::client($version, $server, $port, $url, false);
+        phpCAS::setNoCasServerValidation();
+	phpCAS::handleLogoutRequests(true,false);
     }
 
     function casNameLookup($username) {
